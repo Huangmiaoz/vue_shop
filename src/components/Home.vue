@@ -14,6 +14,8 @@
           unique-opened ="true"
           :collapse = "isCollapse"
           collapse-transition = "false"
+          :router="true"
+          :default-active="activePath"
         >
           <el-sub-menu :index="item.id + ''" v-for="item in muneList" :key="item.id">
             <template #title text-color=#fff>
@@ -21,14 +23,21 @@
               <i :class="iconsObj[item.id]"></i>
               <span>{{item.authName}}</span>
             </template>
-             <el-menu-item :index="subItem.id + ''" v-for="subItem in item.children" :key="subItem.id">
+             <el-menu-item 
+              :index="'/' + subItem.path + ''" 
+              v-for="subItem in item.children" 
+              :key="subItem.id"
+              @click="saveNaveState('/' + subItem.path)"
+            >
              
               <template #title text-color=#fff><el-icon><Grid /></el-icon>{{subItem.authName}}</template>
             </el-menu-item>
           </el-sub-menu>
         </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 
@@ -47,11 +56,15 @@ export default {
         '102' : 'iconfont icon-danju',
         '145' : 'iconfont icon-baobiao'
       },
-      isCollapse : false
+      // 菜单栏是否被折叠
+      isCollapse : false,
+      // 被激活的链接地址
+      activePath : ''
     }
   },
   created() {
     this.getMuneList();
+    this.activePath = window.sessionStorage.getItem('activePath');
   },
   methods : {
     logout() {
@@ -67,6 +80,11 @@ export default {
     // 菜单的折叠和展开
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
+    },
+    // 保存连接的激活状态
+    saveNaveState(activePath) {
+      window.sessionStorage.setItem('activePath',activePath);
+      this.activePath = activePath;
     }
   }
 }

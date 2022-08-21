@@ -3,8 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-import ElementPlus from 'element-plus'
-import { ElMessage  } from 'element-plus'
+import ElementPlus, { ElMessageBox ,ElMessage } from 'element-plus'
+// import {   } from 'element-plus'
 import 'element-plus/dist/index.css'
 // 导入全局样式表
 import './assets/css/global.css'
@@ -27,13 +27,14 @@ app.config.globalProperties.$http = axios
 
 // $message
 app.config.globalProperties.$message = ElMessage
+app.config.globalProperties.$confirm = ElMessageBox.confirm;
 
 app.use(store).use(ElementPlus).use(router).mount('#app')
 
 // 统一导入el-icon图标
-import * as ElIconModules from '@element-plus/icons-vue'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 // 统一注册el-icon图标
-for(let iconName in ElIconModules){
-  app.component(iconName,ElIconModules[iconName])
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
 }
