@@ -3,7 +3,7 @@
     <h3>用户列表</h3>
     <!-- 面包屑导航 -->
     <el-breadcrumb :separator-icon="ArrowRight">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
@@ -68,8 +68,9 @@
             content="分配角色"
             placement="top"
             :enterable="false"
+           
           >
-            <el-button type="warning" :icon="Share" size="mini"/>
+            <el-button type="warning" :icon="Share" size="mini"  @click="setRole(scope.row)"/>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -91,7 +92,7 @@
     </div>
   </el-card>
 
-  <!-- 弹窗 -->
+  <!-- 添加用户弹窗 -->
   <el-dialog
     v-model="addDialogVisible"
     title="添加用户"
@@ -127,7 +128,7 @@
       </span>
     </template>
   </el-dialog>
-<!-- 2 -->
+<!-- 编辑用户信息弹窗 -->
   <el-dialog
     v-model="editDialogVisible"
     title="编辑用户信息"
@@ -158,6 +159,39 @@
       <span class="dialog-footer">
         <el-button @click="editDialogVisible = false">Cancel</el-button>
         <el-button type="primary"  @click="editUser">Confirm</el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+  <!-- 分配角色的对话框 -->
+  <el-dialog
+    v-model="setRoleDialogVisable"
+    title="分配角色"
+    width="50%"
+    @close="setRoleDialogClosed"
+  >
+    <div>
+      <p>当前用户：{{userInfo.username}}</p>
+      <p>该用户的角色：{{userInfo.role_name}}</p>
+      <p>分配新角色：
+        <el-select 
+          v-model="selectRolesId" 
+          placeholder="Select" 
+          size="large"
+        >
+        <el-option
+          v-for="item in rolesList"
+          :key="item.id"
+          :label="item.roleName"
+          :value="item.id"
+        />
+      </el-select>
+      </p>
+    </div>
+     <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="editDialogVisible = false">Cancel</el-button>
+        <el-button type="primary"  @click="saveRole()">Confirm</el-button>
       </span>
     </template>
   </el-dialog>
@@ -216,7 +250,15 @@ export default {
         mobile :[ {require : true, message : '请输入电话号码',trigger : 'blur'},
                   {validator : checkMobile, message : '请输入正确的手机格式',trigger : 'blur'}
                 ],
-      }
+      },
+      // 分配角色的对话框显示与隐藏
+      setRoleDialogVisable : false,
+      // 需要被分配权限的用户
+      userInfo : {},
+      // 所有角色的数据
+      rolesList : [],
+      // 已选中的角色ID值
+      selectRolesId : ''
     } 
   },
   methods : {
@@ -273,7 +315,7 @@ export default {
     },
     async clickEditUser(id) {
       const {data : res} = await this.$http.get('users/'+id);
-      console.log(res);
+      // console.log(res);
       if(res.meta.status !== 200) return this.$message.error(res.meta.msg);
       else {
         this.editForm = res.data;
@@ -322,6 +364,38 @@ export default {
           return this.$message.success(res.meta.msg);
         }
       }
+    },
+    async setRole(userInfo) {
+      console.log(userInfo);
+      this.userInfo = userInfo;
+      console.log('userInfo:' + this.userInfo);
+      this.setRoleDialogVisable = true;
+
+      // 获取所有角色的列表
+      const {data : res} = await this.$http.get('/roles');
+      console.log(res);
+      if(res.meta.status !== 200) return this.$message.error(res.meta.msg);
+        else {
+          this.rolesList = res.data;
+        }
+    },
+    async saveRole() {
+      console.log(this.userInfo.id);
+      console.log(this.selectRolesId);
+      if(!this.selectRolesId) {
+        return this.$message.error('请选择需要分配给该用户的角色');
+      }
+      const {data : res} = await this.$http.put(`/users/${this.userInfo.id}/role`,{rid : this.selectRolesId});
+      if(res.meta.status !== 200) return this.$message.error(res.meta.msg);
+      else {
+        this.setRoleDialogVisable = false;
+        this.getUserList();
+        return this.$message.success(res.meta.msg);   
+      }
+    },
+    setRoleDialogClosed() {
+      this.selectRolesId = '',
+      this.userInfo = {}
     }
   },
   
