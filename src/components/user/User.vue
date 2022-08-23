@@ -343,7 +343,6 @@ export default {
       
     },
     async removeUserById(id) {
-      console.log(id);
       // 先弹框提问是否删除
       const confirmResult = await this.$confirm(
         '该操作不可逆，是否要继续?',
@@ -354,7 +353,6 @@ export default {
         }).catch(() => {
           return this.$message.info('操作取消');
         })
-        console.log(confirmResult);
       if(confirmResult === 'confirm') {
         const {data : res} = await this.$http.delete('users/'+id);
         console.log(res);
