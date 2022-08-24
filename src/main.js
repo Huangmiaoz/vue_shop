@@ -2,7 +2,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-
+// 导入树形插件
+import {ZkTable} from 'vue-table-with-tree-grid'
 import ElementPlus, { ElMessageBox ,ElMessage } from 'element-plus'
 // import {   } from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -38,3 +39,6 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
+
+// 树形组件注册为全局可用的组件
+app.component('tree-table',ZkTable);
