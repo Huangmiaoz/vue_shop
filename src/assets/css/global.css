@@ -24,3 +24,13 @@ body,
 .el-pagination{
   margin-top: 15px;
 }
+.el-steps {
+  margin: 15px;
+}
+.el-step_title {
+  font-size: 13px;
+}
+/* 富文本编辑器的样式 */
+.ql-container {
+  min-height: 300px;
+}

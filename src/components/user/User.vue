@@ -58,7 +58,6 @@
             content="删除"
             placement="top"
             :enterable="false"
-           
           >
             <el-button type="danger" :icon="Delete" size="mini"  @click="removeUserById(scope.row.id)"/>
           </el-tooltip>
