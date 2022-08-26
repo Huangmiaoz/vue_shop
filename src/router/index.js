@@ -10,7 +10,7 @@ import Params from '../components/goods/params.vue'
 import List from '../components/goods/List.vue';
 import Add from '../components/goods/Add.vue';
 import Order from '../components/order/Order.vue';
-
+import Report from '../components/report/Report.vue';
 const routes = [
   {path : '/', redirect : 'login'},
   {path : '/login', component : Login},
@@ -28,6 +28,8 @@ const routes = [
       { path : '/goods', component : List},
       { path : '/goods/add', component : Add},
       { path : '/orders', component : Order},
+      { path : '/reports', component : Report},
+      
     ]
   },
 ]
